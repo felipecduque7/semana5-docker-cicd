@@ -8,5 +8,6 @@ def health(request):
             "Configurar Docker",
             "Automatizar CI",
             "Publicar no GHCR",
+            "Testando hot reload",
         ],
     })
