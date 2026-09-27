@@ -1,4 +1,6 @@
-﻿async function getHealth() {
+﻿import { algoQueNaoExiste } from "./modulo-inexistente";
+
+async function getHealth() {
   const res = await fetch("http://backend:8000/api/health/", {
     cache: "no-store",
   });
