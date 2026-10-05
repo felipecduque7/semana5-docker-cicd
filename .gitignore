@@ -16,3 +16,10 @@ out/
 .DS_Store
 Thumbs.db
 nginx/certs/
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+*firebase-adminsdk*.json
+serviceAccountKey.json
