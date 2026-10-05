@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useEffect, useState } from "react";
+import { buscarDados } from "./dataSource";
 
 export default function Home() {
   const [data, setData] = useState(null);
@@ -8,13 +9,7 @@ export default function Home() {
   const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
-    const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-
-    fetch(`${url}/api/health/`)
-      .then((res) => {
-        if (!res.ok) throw new Error("resposta invalida");
-        return res.json();
-      })
+    buscarDados()
       .then((json) => setData(json))
       .catch(() => setErro(true))
       .finally(() => setCarregando(false));
@@ -30,7 +25,7 @@ export default function Home() {
         <div>
           <p><strong>Dados indisponiveis no momento.</strong></p>
           <p>
-            O backend ainda nao esta publicado na nuvem. A aplicacao continua
+            Nao foi possivel carregar os dados. A aplicacao continua
             funcionando localmente via Docker.
           </p>
         </div>
@@ -38,7 +33,7 @@ export default function Home() {
 
       {data && (
         <>
-          <p>Resposta do backend: <strong>{data.status}</strong></p>
+          <p>Resposta: <strong>{data.status}</strong></p>
           <ul>
             {data.items.map((item) => (
               <li key={item}>{item}</li>
