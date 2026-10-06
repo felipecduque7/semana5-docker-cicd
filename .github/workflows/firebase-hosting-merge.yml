@@ -1,0 +1,66 @@
+name: Deploy para producao
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: deploy-producao
+  cancel-in-progress: false
+
+jobs:
+
+  qualidade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+        working-directory: frontend
+      - run: npm run lint
+        working-directory: frontend
+      - run: npm test
+        working-directory: frontend
+
+  deploy:
+    needs: qualidade
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+        working-directory: frontend
+      - run: npm run build
+        working-directory: frontend
+        env:
+          STATIC_EXPORT: "true"
+          NEXT_PUBLIC_DATA_SOURCE: firestore
+          NEXT_PUBLIC_USE_EMULATOR: "false"
+          NEXT_PUBLIC_FIREBASE_PROJECT_ID: semana6-felipe
+          NEXT_PUBLIC_FIREBASE_API_KEY: AIzaSyBJ0EREkqfA8x5noVtM57DkKafCvzDmp0M
+          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: semana6-felipe.firebaseapp.com
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SEMANA6_FELIPE }}
+          channelId: live
+          projectId: semana6-felipe
+
+  teste-de-fumaca:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verifica se o site responde
+        run: |
+          sleep 15
+          curl --fail --silent --show-error https://semana6-felipe.web.app > /dev/null
+          echo "Site respondeu com sucesso."
