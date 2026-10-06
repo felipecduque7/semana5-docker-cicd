@@ -17,7 +17,7 @@ export default function Home() {
 
   return (
     <main style={{ padding: "3rem", fontFamily: "system-ui" }}>
-      <h1>Status da API — Versão B</h1>
+      <h1>Status da API — Preview</h1> 
 
       {carregando && <p>Carregando...</p>}
 
